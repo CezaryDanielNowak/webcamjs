@@ -15,8 +15,10 @@ var FLASH_OBJ_ID = 'webcam_movie_obj';
 
 var URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 var localStorage = window.localStorage;
-var navigator = window.navigator;
+var navigator = window.navigator || {};
 var isBrowser = window.addEventListener ? true : false;
+var uA = navigator.userAgent || '';
+var ie10Mode = uA.indexOf('Trident') !== -1 && uA.indexOf('rv:11') !== -1;
 
 var Webcam = {
 	version: '1.0.6',
@@ -66,7 +68,7 @@ var Webcam = {
 		this.userMedia = this.userMedia && !!this.mediaDevices && !!URL;
 		
 		// Older versions of firefox (< 21) apparently claim support but user media does not actually work
-		if (navigator.userAgent.match(/Firefox\D+(\d+)/)) {
+		if (uA.match(/Firefox\D+(\d+)/)) {
 			if (parseInt(RegExp.$1, 10) < 21) this.userMedia = null;
 		}
 		
@@ -397,7 +399,7 @@ var Webcam = {
 		}
 		
 		// if this is the user's first visit, set flashvar so flash privacy settings panel is shown first
-		if (localStorage && !localStorage.getItem('webcamjs_visited')) {
+		if (!ie10Mode && localStorage && !localStorage.getItem('webcamjs_visited')) {
 			this.params.new_user = 1;
 			localStorage.setItem('webcamjs_visited', 1);
 		}
